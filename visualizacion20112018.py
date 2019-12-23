@@ -1,14 +1,23 @@
-# visualización sismos Colombia. Iván Ferreira (2019)
-
-import cartopy.crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-import cartopy.feature as cfeature
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-from mpl_toolkits.mplot3d import axes3d  # noqa: F401 unused import
+from matplotlib.collections import LineCollection
 import numpy as np
-import pandas as pd
+
+import cartopy.feature
+from cartopy.mpl.patch import geos_to_path
+import cartopy.crs as ccrs
+
+import itertools
+
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
+import numpy as np
 import matplotlib.cm as cm
+import cartopy.feature
+from cartopy.mpl.patch import geos_to_path
+import cartopy.crs as ccrs
+import pandas as pd
 
 
 # importo las tablas de excel donde estan los sismos del servicio geológico
@@ -26,46 +35,59 @@ fechas = np.asarray(sismos['FECHA'])
 horas = np.asarray(sismos['HORA_UTC'])
 
 
-hora = str(horas[2])
-hora = hora.replace(':','-',1)
-fecha = str(fechas[2])
-#prueba del formato de fecha con hora y minutos
-
-print(fecha[:10]+'h'+hora[:5])
 
 
 
 
-
-# Fixing random state for reproducibility
-
-fig = plt.figure(figsize=(12,9))
-ax = fig.add_subplot(111, projection='3d')
-# proj_ax = plt.figure().add_axes([0, 0, 1, 1], projection=ccrs.Mercator())
-
-c_lons = lons - lons.min()
-c_lats = lats - lats.min()
+fig = plt.figure()
+ax = Axes3D(fig, xlim=[-80, -65], ylim=[-5, 15])
+ax.set_zlim(bottom=-300)
 
 
+target_projection = ccrs.PlateCarree()
 
-prof = 0
+feature = cartopy.feature.COASTLINE
+geoms = feature.geometries()
+
+geoms = [target_projection.project_geometry(geom, feature.crs)
+         for geom in geoms]
+
+paths = list(itertools.chain.from_iterable(geos_to_path(geom) for geom in geoms))
 
 
-# Se ubican las ciudades
+segments = []
+for path in paths:
+    vertices = [vertex for vertex, _ in path.iter_segments()]
+    vertices = np.asarray(vertices)
+    segments.append(vertices)
 
-ax.scatter(c_lons, c_lats, -deps,'r*', c=mags/10, cmap='jet', s=mags*3,label ="Sismos")
+lc = LineCollection(segments, color='green')
 
-xx, yy = np.meshgrid(range(2), range(2)) # se crea la red que genera el plano
-xx, yy = xx/2, yy/2
-z = np.zeros((2,2))
-a = 0
-z= np.array([[ a,  a],[a, a]]) # plano en cero, se crea variable a para controlar su ubicación
-ax.plot_surface(xx, yy, z,alpha=0.2)
 
-ax.set_xlabel('X Label')
-ax.set_ylabel('Y Label')
+ax.add_collection3d(lc)
+
+s = lambda x : ((x-x.min())/float(x.max()-x.min()))*50
+
+
+
+# ax.scatter(lons,lats, -deps, s=s(mags), c=mags, cmap=cm.rainbow, label ="Sismos")
+img =  ax.scatter(lons,lats, -deps, s=s(mags), c=mags, cmap=cm.rainbow, label ="Sismos")
+
+fig.colorbar(img)
+ax.set_xlabel('Longitud')
+ax.set_ylabel('Latitud')
 ax.set_zlabel('Profundidad')
-ax.set_title("Sismos Colombia 2011-2018\n (MW>3.5)\n")
+ax.scatter(-73.1023,6.7557,1.3,marker='*',c='black', s=400)
+ax.scatter(-73.1023,6.7557, 1.3,marker='*',c='red', s=200, label='Los Santos')
 
+ax.scatter(-74.1029,4.7154,2.6, marker='*',c='black', s=400)
+ax.scatter(-74.1029,4.7154,2.6,marker='*',c='yellow', s=200, label='Bogota')
+
+ax.scatter(-76.6498,5.6956,marker='*',c='black', s=400) 
+ax.scatter(-76.6498,5.6956,marker='*',c='blue', s=200, label='Quibdo')
+
+
+ 
 plt.legend()
+plt.savefig('fig_NablaBsing.pdf', bbox_inches='tight')
 plt.show()
