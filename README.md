@@ -6,4 +6,4 @@ Se utiliza Cartopy y Matplotlib, se adjunta además los datos usados en la tabla
 misma carpeta que el codigo (.py)
 
 
-![animacionVisualizacion](visSismos.gif)
+![animacionVisualizacion](demoVisSismos.gif)
