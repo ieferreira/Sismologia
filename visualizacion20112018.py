@@ -1,10 +1,15 @@
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
+import numpy as np
+import cartopy.feature
+from cartopy.mpl.patch import geos_to_path
 import cartopy.crs as ccrs
 import itertools
-import numpy as np
 import matplotlib.cm as cm
+import cartopy.feature
 import pandas as pd
+
 
 
 # importo las tablas de excel donde estan los sismos del servicio geológico
@@ -76,5 +81,4 @@ ax.scatter(-76.6498,5.6956,marker='*',c='blue', s=200, label='Quibdo')
 
  
 plt.legend()
-plt.savefig('fig_NablaBsing.pdf', bbox_inches='tight')
 plt.show()
