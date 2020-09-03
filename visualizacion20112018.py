@@ -1,22 +1,9 @@
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-from matplotlib.collections import LineCollection
-import numpy as np
-
-import cartopy.feature
-from cartopy.mpl.patch import geos_to_path
 import cartopy.crs as ccrs
-
 import itertools
-
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from matplotlib.collections import LineCollection
 import numpy as np
 import matplotlib.cm as cm
-import cartopy.feature
-from cartopy.mpl.patch import geos_to_path
-import cartopy.crs as ccrs
 import pandas as pd
 
 
