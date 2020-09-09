@@ -1,4 +1,4 @@
-# Sismología
+# Sismos de Colombia (Earthquakes from Colombia)
 **Visualización Sismos usando cartopy y matplotlib en Colombia**
 
 
